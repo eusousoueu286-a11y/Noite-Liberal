@@ -1,331 +1,433 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#100d17">
-  <meta name="description" content="Noite Liberal: encontros e conexões com respeito e consentimento.">
-  <title>Noite Liberal | Encontros e conexões</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  <meta name="theme-color" content="#160d1c">
+  <meta name="description" content="Noite Liberal — conexões, respeito e encontros entre adultos.">
+  <title>Noite Liberal | Conexões sem preconceito</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #100b14;
+      --panel: #201426;
+      --pink: #ff3d91;
+      --purple: #b65cff;
+      --text: #fff5fb;
+      --muted: #c6b5c9;
+    }
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
-      background: #100d17;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 24px 16px;
+      font-family: system-ui, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at top, #492044 0, transparent 55%),
+        var(--bg);
     }
-
-    main { max-width: 440px; margin: 30px auto; }
-
-    header { text-align: center; margin-bottom: 28px; }
-
-    .logo { font-size: 38px; }
-
-    h1 { margin: 10px 0; color: #f0abfc; }
-
-    p { color: #c7bfd1; line-height: 1.5; }
-
-    .card {
-      background: #1c1726;
-      border: 1px solid #40334e;
+    header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ffffff18;
+    }
+    .logo { font-weight: 900; font-size: 22px; }
+    .logo span { color: var(--pink); }
+    .adult {
+      border: 1px solid #ff3d9170;
+      border-radius: 20px;
+      padding: 6px 10px;
+      color: #ff9cc6;
+      font-size: 12px;
+    }
+    main {
+      width: min(100% - 28px, 960px);
+      margin: 35px auto;
+    }
+    .hero { text-align: center; padding: 15px 0 30px; }
+    .hero h1 {
+      font-size: clamp(34px, 8vw, 58px);
+      line-height: 1.08;
+      margin: 10px 0 16px;
+    }
+    .hero h1 span {
+      color: var(--pink);
+    }
+    .hero p {
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .panel {
+      background: #201426eF;
+      border: 1px solid #ffffff17;
+      border-radius: 20px;
       padding: 22px;
-      border-radius: 18px;
+      box-shadow: 0 15px 45px #0004;
     }
-
+    h2 { margin-top: 0; }
+    .muted { color: var(--muted); font-size: 14px; line-height: 1.6; }
     label {
       display: block;
-      margin: 14px 0 7px;
+      margin: 15px 0 7px;
+      font-size: 14px;
     }
-
     input, select {
-      display: block;
       width: 100%;
       padding: 13px;
-      border-radius: 9px;
-      border: 1px solid #51445f;
-      background: #110e18;
+      border-radius: 10px;
+      border: 1px solid #604563;
+      background: #130d18;
       color: white;
-      font-size: 16px;
+      font: inherit;
     }
-
-    input[type="checkbox"] {
-      display: inline;
-      width: auto;
-      margin-right: 6px;
+    input:focus, select:focus {
+      outline: 2px solid var(--purple);
+      border-color: transparent;
     }
-
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .check input { width: auto; margin-top: 4px; }
     button {
       width: 100%;
+      padding: 13px;
+      margin-top: 15px;
       border: 0;
-      border-radius: 9px;
-      padding: 14px;
-      margin-top: 13px;
-      background: #d946ef;
-      color: #190d20;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: 11px;
+      background: linear-gradient(100deg, var(--pink), var(--purple));
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
       cursor: pointer;
     }
-
-    button.secondary {
-      background: #352841;
-      color: white;
+    button:disabled { opacity: .55; cursor: wait; }
+    .secondary {
+      background: #392641;
+      border: 1px solid #68486f;
     }
-
-    button:disabled { opacity: .55; }
-
-    #status { overflow-wrap: anywhere; }
-
-    .small { font-size: 12px; text-align: center; }
-
-    [hidden] { display: none !important; }
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #38233e;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .feature {
+      background: #ffffff08;
+      border: 1px solid #ffffff12;
+      padding: 15px;
+      border-radius: 14px;
+      text-align: center;
+    }
+    .feature strong { display: block; margin-bottom: 7px; }
+    .feature span { font-size: 13px; color: var(--muted); }
+    #account { display: none; }
+    footer {
+      padding: 30px 15px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    @media (max-width: 650px) {
+      .layout { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+      header { padding: 16px; }
+      main { margin-top: 22px; }
+    }
   </style>
 </head>
-
 <body>
-<main>
   <header>
-    <div class="logo">🌙</div>
-    <h1>Noite Liberal</h1>
-    <p>Encontros, conexões e liberdade com respeito e consentimento.</p>
+    <div class="logo">🌙 Noite<span>Liberal</span></div>
+    <div class="adult">18+ · Somente adultos</div>
   </header>
 
-  <section class="card" id="authPanel">
-    <h2>Entre ou crie sua conta</h2>
-    <p>Plataforma destinada exclusivamente a maiores de 18 anos.</p>
+  <main>
+    <section class="hero">
+      <h1>Conexões reais.<br><span>Respeito sempre.</span></h1>
+      <p>
+        Um espaço para adultos que desejam conhecer pessoas,
+        trocar experiências e descobrir novas conexões com
+        diálogo, privacidade e consentimento.
+      </p>
+    </section>
 
-    <form id="signupForm">
-      <h3>Criar conta</h3>
+    <section id="account" class="panel">
+      <h2>Você está conectado! 💜</h2>
+      <p id="welcome" class="muted"></p>
+      <p class="muted">
+        Sua conta está criada. A área de descoberta de perfis e
+        as conversas privadas ainda serão implementadas.
+      </p>
+      <button id="logout" class="secondary" type="button">Sair da conta</button>
+      <div id="accountMessage" class="message" role="status"></div>
+    </section>
 
-      <label for="nickname">Apelido</label>
-      <input id="nickname" maxlength="40" minlength="2"
-        autocomplete="nickname" required>
+    <section id="auth" class="layout">
+      <div class="panel">
+        <h2>✨ Criar conta</h2>
+        <p class="muted">Entre para fazer parte da comunidade.</p>
+        <form id="signup">
+          <label for="nickname">Apelido</label>
+          <input id="nickname" maxlength="40" required
+            autocomplete="nickname" placeholder="Como deseja ser chamado?">
 
-      <label for="type">Tipo de perfil</label>
-      <select id="type" required>
-        <option value="casal">Casal</option>
-        <option value="solteiro">Solteiro(a)</option>
-        <option value="grupo">Grupo</option>
-      </select>
+          <label for="type">Tipo de perfil</label>
+          <select id="type" required>
+            <option value="casal">Casal</option>
+            <option value="individual">Pessoa individual</option>
+          </select>
 
-      <label for="signupEmail">E-mail</label>
-      <input id="signupEmail" type="email"
-        autocomplete="email" required>
+          <label for="email">E-mail</label>
+          <input id="email" type="email" required
+            autocomplete="email" placeholder="voce@exemplo.com">
 
-      <label for="signupPassword">Senha (mínimo 8 caracteres)</label>
-      <input id="signupPassword" type="password"
-        minlength="8" autocomplete="new-password" required>
+          <label for="password">Senha (mínimo 8 caracteres)</label>
+          <input id="password" type="password" required minlength="8"
+            autocomplete="new-password" placeholder="Crie uma senha">
 
-      <label>
-        <input id="age" type="checkbox" required>
-        Confirmo que tenho 18 anos ou mais.
-      </label>
+          <label class="check">
+            <input id="age" type="checkbox" required>
+            <span>Confirmo que tenho 18 anos ou mais.</span>
+          </label>
+          <label class="check">
+            <input id="consent" type="checkbox" required>
+            <span>
+              Aceito as regras de respeito, privacidade e consentimento.
+              Entendo que encontros devem ser voluntários e entre adultos.
+            </span>
+          </label>
+          <button id="signupButton" type="submit">Criar minha conta</button>
+          <div id="signupMessage" class="message" role="status"></div>
+        </form>
+      </div>
 
-      <label>
-        <input id="consent" type="checkbox" required>
-        Concordo com as regras de respeito, consentimento e privacidade.
-      </label>
+      <div class="panel">
+        <h2>💌 Já tem uma conta?</h2>
+        <p class="muted">Entre para continuar.</p>
+        <form id="login">
+          <label for="loginEmail">E-mail</label>
+          <input id="loginEmail" type="email" required
+            autocomplete="email" placeholder="Seu e-mail">
 
-      <button type="submit">Criar minha conta</button>
-    </form>
+          <label for="loginPassword">Senha</label>
+          <input id="loginPassword" type="password" required
+            autocomplete="current-password" placeholder="Sua senha">
 
-    <hr style="border-color:#40334e;margin:25px 0">
+          <button id="loginButton" type="submit">Entrar</button>
+          <div id="loginMessage" class="message" role="status"></div>
+        </form>
+        <p class="muted">
+          Nunca compartilhe sua senha. Use um apelido e evite publicar
+          dados pessoais ou informações que revelem seu endereço.
+        </p>
+      </div>
+    </section>
 
-    <form id="loginForm">
-      <h3>Já tenho uma conta</h3>
+    <section class="features">
+      <div class="feature">
+        <strong>🔒 Privacidade</strong>
+        <span>Cuide dos seus dados e respeite os dos outros.</span>
+      </div>
+      <div class="feature">
+        <strong>🤝 Consentimento</strong>
+        <span>Limites claros e respeito em todas as interações.</span>
+      </div>
+      <div class="feature">
+        <strong>💬 Novas conexões</strong>
+        <span>Conheça pessoas sem pressão e com responsabilidade.</span>
+      </div>
+    </section>
+  </main>
 
-      <label for="loginEmail">E-mail</label>
-      <input id="loginEmail" type="email"
-        autocomplete="email" required>
+  <footer>
+    Noite Liberal · Comunidade exclusiva para maiores de 18 anos.<br>
+    Respeito, privacidade e consentimento são indispensáveis.<br>
+    Não publique fotos ou informações de outras pessoas sem autorização.
+  </footer>
 
-      <label for="loginPassword">Senha</label>
-      <input id="loginPassword" type="password"
-        autocomplete="current-password" required>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://utdxjlfobsxjxxqjpvta.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ChVy9FSLXuJLRhkBx3o9gg_OhmNEuzE";
 
-      <button type="submit" class="secondary">Entrar</button>
-    </form>
-  </section>
+    const authSection = document.getElementById("auth");
+    const accountSection = document.getElementById("account");
 
-  <section class="card" id="accountPanel" hidden>
-    <h2>Bem-vindo(a)!</h2>
-    <p id="welcome"></p>
-    <p>Sua conta está conectada ao Noite Liberal.</p>
-    <p>Esta é a área inicial do seu perfil.</p>
-    <button id="logout" class="secondary">Sair da conta</button>
-  </section>
-
-  <p id="status" role="status" aria-live="polite"></p>
-
-  <p class="small">
-    Respeite os limites e o consentimento de todas as pessoas.
-    Nunca compartilhe imagens íntimas sem autorização.
-  </p>
-</main>
-
-<script>
-(() => {
-  const SUPABASE_URL = "https://utdxjlfobsxjxxqjpvta.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_ChVy9FSLXuJLRhkBx3o9gg_OhmNEuzE";
-
-  const status = document.getElementById("status");
-  const authPanel = document.getElementById("authPanel");
-  const accountPanel = document.getElementById("accountPanel");
-  const signupForm = document.getElementById("signupForm");
-  const loginForm = document.getElementById("loginForm");
-
-  function message(text) {
-    status.textContent = text;
-  }
-
-  if (!window.supabase) {
-    message("Não foi possível carregar o Supabase. Verifique sua conexão.");
-    return;
-  }
-
-  const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-  function showAccount(user) {
-    authPanel.hidden = true;
-    accountPanel.hidden = false;
-    document.getElementById("welcome").textContent =
-      "Conta conectada: " + user.email;
-  }
-
-  async function ensureProfile(user) {
-    const meta = user.user_metadata || {};
-    const nickname = meta.nickname;
-    const userType = meta.user_type;
-
-    if (!nickname || !["casal", "solteiro", "grupo"].includes(userType)) {
-      return;
+    function showMessage(id, text) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.style.display = "block";
     }
 
-    const { error } = await db.from("profiles").upsert({
-      id: user.id,
-      nickname: nickname,
-      user_type: userType
-    }, {
-      onConflict: "id"
-    });
-
-    if (error) {
-      console.error("Erro ao salvar perfil:", error.message);
-      message("Conta conectada, mas houve um erro ao salvar o perfil.");
+    function setBusy(id, busy, text) {
+      const button = document.getElementById(id);
+      button.disabled = busy;
+      if (!button.dataset.original) button.dataset.original = button.textContent;
+      button.textContent = busy ? "Aguarde..." : button.dataset.original;
+      if (text) button.textContent = text;
     }
-  }
 
-  signupForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    async function start() {
+      if (!window.supabase) {
+        showMessage("loginMessage",
+          "Não foi possível carregar o serviço de autenticação. Confira sua conexão e recarregue a página.");
+        return;
+      }
 
-    const button = signupForm.querySelector('button[type="submit"]');
-    button.disabled = true;
-    message("Criando sua conta...");
+      const client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
-    try {
-      const nickname = document.getElementById("nickname").value.trim();
-      const type = document.getElementById("type").value;
-      const email = document.getElementById("signupEmail").value.trim();
-      const password = document.getElementById("signupPassword").value;
+      async function refreshAccount(session) {
+        if (!session) {
+          authSection.style.display = "grid";
+          accountSection.style.display = "none";
+          return;
+        }
 
-      const { data, error } = await db.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
+        authSection.style.display = "none";
+        accountSection.style.display = "block";
+
+        const user = session.user;
+        const nickname = user.user_metadata?.nickname || "membro";
+        document.getElementById("welcome").textContent =
+          "Olá, " + nickname + "! Você entrou com " + user.email + ".";
+
+        // Tenta manter o perfil básico sincronizado após o login.
+        const userType = user.user_metadata?.user_type;
+        if (nickname && userType) {
+          const { error } = await client.from("profiles").upsert({
+            id: user.id,
             nickname: nickname,
-            user_type: type
+            user_type: userType
+          }, { onConflict: "id" });
+
+          if (error) {
+            showMessage("accountMessage",
+              "Login realizado. O perfil não pôde ser sincronizado agora. Verifique as colunas e as políticas RLS da tabela profiles no Supabase.");
           }
+        }
+      }
+
+      document.getElementById("signup").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setBusy("signupButton", true);
+
+        const nickname = document.getElementById("nickname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const userType = document.getElementById("type").value;
+
+        if (!document.getElementById("age").checked ||
+            !document.getElementById("consent").checked) {
+          showMessage("signupMessage",
+            "Confirme a idade mínima e aceite as regras para continuar.");
+          setBusy("signupButton", false);
+          return;
+        }
+
+        const { data, error } = await client.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              nickname,
+              user_type: userType
+            }
+          }
+        });
+
+        setBusy("signupButton", false);
+
+        if (error) {
+          showMessage("signupMessage", "Não foi possível criar a conta: " + error.message);
+          return;
+        }
+
+        if (data.session) {
+          await refreshAccount(data.session);
+          showMessage("accountMessage", "Conta criada com sucesso!");
+        } else {
+          showMessage("signupMessage",
+            "Cadastro iniciado! Confira seu e-mail e confirme o endereço antes de entrar. Se não receber a mensagem, confira a pasta de spam.");
         }
       });
 
-      if (error) throw error;
+      document.getElementById("login").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setBusy("loginButton", true);
 
-      if (data.session && data.user) {
-        await ensureProfile(data.user);
-        showAccount(data.user);
-        message("Conta criada com sucesso!");
-      } else {
-        message(
-          "Cadastro realizado! Confira seu e-mail para confirmar a conta. Depois, faça login."
-        );
-      }
-    } catch (error) {
-      message("Erro no cadastro: " + error.message);
-    } finally {
-      button.disabled = false;
-    }
-  });
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
 
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+        const { data, error } = await client.auth.signInWithPassword({
+          email,
+          password
+        });
 
-    const button = loginForm.querySelector('button[type="submit"]');
-    button.disabled = true;
-    message("Entrando...");
+        setBusy("loginButton", false);
 
-    try {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
+        if (error) {
+          showMessage("loginMessage", "Não foi possível entrar: " + error.message);
+          return;
+        }
 
-      const { data, error } = await db.auth.signInWithPassword({
-        email,
-        password
+        await refreshAccount(data.session);
       });
 
-      if (error) throw error;
+      document.getElementById("logout").addEventListener("click", async () => {
+        const { error } = await client.auth.signOut();
+        if (error) {
+          showMessage("accountMessage", "Não foi possível sair: " + error.message);
+          return;
+        }
+        await refreshAccount(null);
+      });
 
-      await ensureProfile(data.user);
-      showAccount(data.user);
-      message("Login realizado com sucesso!");
-    } catch (error) {
-      message("Erro ao entrar: " + error.message);
-    } finally {
-      button.disabled = false;
-    }
-  });
+      const { data, error } = await client.auth.getSession();
+      if (error) {
+        showMessage("loginMessage", "Erro ao verificar a sessão. Tente recarregar a página.");
+        return;
+      }
+      await refreshAccount(data.session);
 
-  document.getElementById("logout").addEventListener("click", async () => {
-    const { error } = await db.auth.signOut();
-
-    if (error) {
-      message("Erro ao sair: " + error.message);
-      return;
-    }
-
-    accountPanel.hidden = true;
-    authPanel.hidden = false;
-    message("Você saiu da conta.");
-  });
-
-  db.auth.onAuthStateChange((event, session) => {
-    if (session && session.user) {
-      showAccount(session.user);
-    } else {
-      accountPanel.hidden = true;
-      authPanel.hidden = false;
-    }
-  });
-
-  db.auth.getSession().then(({ data, error }) => {
-    if (error) {
-      message("Não foi possível verificar sua sessão.");
-      return;
+      client.auth.onAuthStateChange((_event, session) => {
+        refreshAccount(session);
+      });
     }
 
-    if (data.session && data.session.user) {
-      showAccount(data.session.user);
-    }
-  });
-})();
-</script>
+    start().catch(() => {
+      showMessage("loginMessage",
+        "Ocorreu um erro ao iniciar o site. Atualize a página e tente novamente.");
+    });
+  </script>
 </body>
 </html>
